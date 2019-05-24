@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import cn.fuelteam.watt.longpolling.longpolling.LongPollingEventSimulator;
-import cn.fuelteam.watt.longpolling.longpolling.LongPollingSession;
+import cn.fuelteam.watt.longpolling.common.EventSimulator;
+import cn.fuelteam.watt.longpolling.common.LongPollingSession;
 
 @Controller
 public class UiController {
@@ -18,23 +18,23 @@ public class UiController {
     private static final Logger logger = LoggerFactory.getLogger(UiController.class);
 
     @Autowired
-    LongPollingEventSimulator simulator;
+    EventSimulator simulator;
 
-    @RequestMapping("/register/{dossierId}")
+    @RequestMapping("/register/{userId}")
     @ResponseBody
-    public DeferredResult<String> registerClient(@PathVariable("dossierId") final long dossierId) {
-        logger.info("Registering client for dossier id: " + dossierId);
+    public DeferredResult<String> registerClient(@PathVariable("userId") final long userId) {
+        logger.info("Registering for userId: " + userId);
         final DeferredResult<String> deferredResult = new DeferredResult<>();
         // Add paused http requests to event queue
-        simulator.getPollingQueue().add(new LongPollingSession(dossierId, deferredResult));
+        simulator.getPollingQueue().add(new LongPollingSession(userId, deferredResult));
         return deferredResult;
     }
 
-    @RequestMapping("/simulate/{dossierId}")
+    @RequestMapping("/simulate/{userId}")
     @ResponseBody
-    public String simulateEvent(@PathVariable("dossierId") final long dossierId) {
-        logger.info("Simulating event for dossier id: " + dossierId);
-        simulator.simulateIncomingNotification(dossierId);
-        return "Simulating event for dossier Id: " + dossierId;
+    public String simulateEvent(@PathVariable("userId") final long userId) {
+        logger.info("Simulating event for userId: " + userId);
+        simulator.simulateIncomingNotification(userId);
+        return "Simulating event for userId: " + userId;
     }
 }

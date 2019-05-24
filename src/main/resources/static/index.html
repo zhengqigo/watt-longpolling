@@ -13,37 +13,37 @@
 
             $( '#register' ).click( function( event ) {
                 event.preventDefault();
-                var dossierId = $('#dossier-id-input').val();
-                if (dossierId == "") {
-                    alert("Please enter a numerical Dossier Id.");
+                var userId = $('#userId-input').val();
+                if (userId == "") {
+                    alert("Please enter a numerical userId.");
                     return;
                 }
-                console.log("Calling poll() with dossier id: " + dossierId);
-                $('#results').append("<li><span style=\"color:blue;\">Registered client for long-polling for dossier id "+dossierId+"</li>");
+                console.log("Calling poll() with userId: " + userId);
+                $('#results').append("<li><span style=\"color:blue;\">Registered for long-polling for userId: "+userId+"</li>");
 
                 // simulate the WebSocket connection - this will always fail
                 if(useWebSockets) {
                     console.log("Simulating WebSocket failure.");
-                    var wsUri = "ws://non.existent.url/";
+                    var wsUri = "ws://localhost:8080/";
                     var websocket = new WebSocket(wsUri);
                     websocket.onerror = function (evt) {
                         useWebSockets = false;
                         // on WebSocket error, gracefully fall back to long polling strategy
                         console.log("WebSocket error, gracefully fall back to long polling strategy.");
-                        poll(dossierId);
+                        poll(userId);
                     };
                 } else {
-                    console.log("Calling poll() with dossier id: " + dossierId);
-                    poll(dossierId);
+                    console.log("Calling poll() with userId: " + userId);
+                    poll(userId);
                 }
             });
 
             $( '#simulate' ).click( function( event ) {
                 event.preventDefault();
-                var dossierId = $('#dossier-id-input').val();
-                console.log("Calling simulate() with dossier id: " + dossierId);
-                simulate(dossierId);
-                $('#results').append("<li><span style=\"color:green;\">Simulating event for dossier id "+dossierId+"</li>");
+                var userId = $('#userId-input').val();
+                console.log("Calling simulate() with userId: " + userId);
+                simulate(userId);
+                $('#results').append("<li><span style=\"color:green;\">Simulating event for userId: "+userId+"</li>");
                 $('#results').append("<li><span style=\"color:green;\">Be patient, the event is fired asynchronously and may have a delay of a few seconds</li>");
             });
 
@@ -52,23 +52,23 @@
              * - every 60 seconds if there is no data sent from server;
              * - immediately if data is received from the server;
              */
-            function poll(dossierId){
+            function poll(userId){
                 $.ajax({
-                    url: "register/"+dossierId,
+                    url: "register/"+userId,
                     success: function(data, status, jqXHR) {
                         // do something with the data
                         console.log(data);
                         $('#results').append("<li style=\"color:purple;\"><pre>"+JSON.stringify(JSON.parse(data), null, 4)+"</pre></li>");
-                        setTimeout( poll(dossierId), 10 );
+                        setTimeout( poll(userId), 10 );
                     },
                     error: function(jqXHR, status, errorThrown) {
                         if (status=='timeout') {
                             console.log( 'request timed out.' );
-                            setTimeout( poll(dossierId), 10 );
+                            setTimeout( poll(userId), 10 );
                         }
                         else {
                             console.log(status);
-                            setTimeout( poll(dossierId), 60000 );
+                            setTimeout( poll(userId), 60000 );
                         }
                     },
                     dataType: "text",
@@ -77,9 +77,9 @@
                 });
             }
 
-            function simulate(dossierId){
+            function simulate(userId){
                 $.ajax({
-                    url: "simulate/"+dossierId,
+                    url: "simulate/"+userId,
                     success: function(data, status, jqXHR) {
                         // do something with the data
                         console.log("Event simulated successfully.");
@@ -96,11 +96,10 @@
 	<div>Long-polling example</div>
 	<hr>
 	<div>
-		<span>Enter dossier id: <input type="text"
-			id="dossier-id-input"></span>
-		<button id="register">Register for dossier updates</button>
+		<span>Enter numerical userId: <input type="text" id="userId-input"></span>
+		<button id="register">Register for userId updates</button>
 		<br>
-		<button id="simulate">Simulate notification event on dossier</button>
+		<button id="simulate">Simulate notification event on userId</button>
 		<ul id="results"></ul>
 	</div>
 
