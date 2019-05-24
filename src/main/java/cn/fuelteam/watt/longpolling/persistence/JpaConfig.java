@@ -19,7 +19,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "cn.fuelteam.watt.longpolling.persistence.dao")
-@PropertySource("application.properties")
+@PropertySource("application.yml")
 @EnableTransactionManagement
 public class JpaConfig {
 

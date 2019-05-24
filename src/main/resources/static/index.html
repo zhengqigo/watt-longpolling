@@ -6,11 +6,8 @@
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <script type="text/javascript">
-
-        var useWebSockets = true;
-
+        var useWebSockets = false;
         $( document ).ready( function() {
-
             $( '#register' ).click( function( event ) {
                 event.preventDefault();
                 var userId = $('#userId-input').val();
@@ -59,7 +56,7 @@
                         // do something with the data
                         console.log(data);
                         $('#results').append("<li style=\"color:purple;\"><pre>"+JSON.stringify(JSON.parse(data), null, 4)+"</pre></li>");
-                        setTimeout( poll(userId), 10 );
+                        setTimeout( simulate(userId), 10 );
                     },
                     error: function(jqXHR, status, errorThrown) {
                         if (status=='timeout') {
